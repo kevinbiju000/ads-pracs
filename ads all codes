@@ -1,0 +1,1294 @@
+PRIMS :
+#include<iostream>
+using namespace std;
+
+class graph{
+    int cost[10][10];
+    int tcities;
+
+    public:
+    graph();
+    void create();
+    void display();
+    int prims(int);
+};
+
+graph::graph(){
+    tcities = 0;
+    cout<<"Enter number of cities : ";
+    cin>>tcities;
+    for (int i = 0; i < tcities; i++){
+        for (int j = 0; j < tcities; j++)
+            cost[i][j]=999;    
+    } 
+}
+
+void graph::create(){
+    char ch;
+    for (int i = 0; i < tcities; i++){
+        for (int j = i+1; j < tcities; j++){
+            cout<<"\nIs there a connection between "<<i<<" "<<j<<" (y or n) : ";
+            cin>>ch;
+            if(ch == 'y'){
+                cout<<endl<<"\nEnter cost between city "<<i<<" and city "<<j<<" : ";
+                cin>>cost[i][j];
+                cost[j][i] = cost[i][j];
+            }    
+        }
+    }
+}
+
+void graph::display(){
+    cout<<"\nThe Adjacency matrix is : \n";
+    for (int i = 0; i < tcities; i++){
+        for (int j = 0; j < tcities; j++){
+            cout<<cost[i][j]<<" ";
+        }
+        cout<<"\n";
+    }
+}
+
+int graph::prims(int v){
+    int nearest[10] , mincost = 0;
+    nearest[v] = -1;
+    for (int i = 0; i < tcities; i++)
+    {
+        if(i != v)
+            nearest[i] = v;
+    }
+    for (int i = 0; i < tcities-1; i++)
+    {
+        int j,min = 999;
+        for (int k = 0; k < tcities; k++)
+        {
+            if(nearest[k] != -1 && cost[k][nearest[k]]<min){
+                j = k;
+                min = cost[k][nearest[k]];
+            }
+        }
+        cout<<"\n"<<j<<" "<<cost[j][nearest[j]];
+        mincost = mincost + cost[j][nearest[j]];
+        nearest[j] = -1;
+        for (int k = 0; k < tcities; k++)
+        {
+            if(nearest[k] != -1 && (cost[k][nearest[k]]) > cost[k][j])
+                nearest[k] = j;
+        }
+    }
+    return mincost;
+}
+
+int main(){
+    graph a;
+    int v,b;
+    a.create();
+    a.display();
+    cout<<"\n Enter the starting city : ";
+    cin>>v;
+    cout<<"\n The spanning tree is as follows : ";
+    b = a.prims(v);
+    cout<<"\n The total cost is : "<<b;
+}
+
+Threaded Binary Tree :
+#include <iostream>
+using namespace std;
+
+class tbt_node{
+    char data;
+    bool rbit;
+    bool lbit;
+    tbt_node *rightc;
+    tbt_node *leftc;
+    friend class tbt;
+    public:
+    tbt_node();
+};
+
+tbt_node::tbt_node(){
+    lbit=0;
+    rbit=0;
+}
+
+class tbt {
+tbt_node *head;
+public:
+void create();
+void preorder();
+void inorder();
+tbt_node *insuccr(tbt_node *temp);
+tbt();
+};
+
+tbt::tbt() {
+    head= new tbt_node();
+    head->rbit=1;
+    head->leftc= head;
+    head->rightc = head;
+}
+
+void tbt::create()
+{
+    char ch;
+tbt_node *root=new tbt_node();
+cout<<"Enter data"<<endl;
+cin>>root->data;
+head->lbit=1;
+root->leftc=head;
+root->rightc =head;
+head->leftc=root;
+
+do
+{
+int flag=0;
+char ch1;
+tbt_node *temp=root;
+tbt_node *curr = new tbt_node();
+cout<<"Enter data"<<endl;
+cin>>curr->data;
+
+while(flag==0)
+{
+cout<<"Enter left or right"<<endl;
+cin>>ch1;
+if (ch1=='l')
+{
+if(temp->lbit==0)
+{
+curr->rightc=temp;
+curr->leftc=temp->leftc;
+temp->leftc=curr;
+temp->lbit=1;
+flag=1;
+}
+else
+temp=temp->leftc;
+if(ch1=='r') {
+if(temp->rbit==0)
+{
+curr
+->leftc=temp;
+curr->rightc=temp->rightc;
+temp->rightc=curr;
+temp->rbit=1;
+flag=1;
+}
+else
+temp=temp->rightc;
+}
+}
+cout<<"Enter 'a' if you want to continue"<<endl;
+cin>>ch;
+}
+}while(ch=='a');
+}
+tbt_node *tbt::insuccr(tbt_node *temp){
+    tbt_node *x=temp->rightc;
+    if(temp->rbit==1){
+        while(x->lbit==1)
+        x=x->leftc;
+    }
+    return x;
+}
+
+void tbt::inorder(){
+    tbt_node *temp=head;
+    while(1){
+        temp=insuccr(temp);
+        if(temp == head) break;
+        cout<< temp->data<<" ";
+    }
+
+}
+
+
+void tbt::preorder(){
+    tbt_node *temp=head->leftc;
+    while(temp!=head)
+    {
+        cout<<temp->data<<" ";
+        while(temp->lbit != 0)
+        {
+            temp=temp->leftc;
+            cout<<temp->data<<" ";
+        }
+        while(temp->rbit==0)
+        temp=temp->rightc;
+        temp=temp->rightc;
+    }
+
+}
+int main()
+{
+    tbt t;
+    t.create();
+    cout<<endl;
+    t.preorder();
+    cout<<endl;
+    t.inorder();
+    cout<<endl;
+}
+
+INORDER, PREORDER, POSTORDER
+
+#include <iostream>
+#include <stack>
+using namespace std;
+
+class treenode{
+    char data[10];
+    treenode *left;
+    treenode *right;
+    friend class tree;
+};
+    
+class tree{
+
+    treenode *root;
+    
+    public:
+    tree();
+    void create();
+    void create(treenode*);
+    void inorder();
+    void inorder(treenode*);
+    void r_inorder(treenode*);
+    void preorder();
+    void preorder(treenode*);
+    void r_preorder(treenode*);
+    void postorder();
+    void postorder(treenode*);
+    void r_postorder(treenode*);
+    
+};
+
+tree::tree(){
+    root = NULL;
+}
+    
+void tree::create(){
+    root = new treenode();
+    cout<<"Enter root value : "<<endl;
+    cin >> root->data;
+    create(root);
+}
+
+void tree::create(treenode* temp){
+    char ch;
+    int a;
+    do{
+        int flag = 0;
+        temp = root;
+        treenode *curr = new treenode();
+        cout<<"Enter value : "<<endl;
+        cin >> curr->data;
+        while(flag == 0){
+            cout<<"Enter l to enter data to left or r to enter data to right of "<< temp->data <<endl;
+            cin >> ch;
+            if(ch == 'l'){
+                if(temp->left == NULL){
+                    temp->left = curr;
+                    flag = 1;
+                }
+                temp = temp->left;
+            }
+            else {
+                if(temp->right == NULL){
+                    temp->right = curr;
+                    flag = 1;
+                }
+                temp = temp->right;
+            }
+        }
+        cout<<"Enter 0 to exit or any other number to continue"<<endl;
+        cin >> a;
+    }while(a!=0);
+}
+
+void tree::inorder(){
+    inorder(root);
+    cout<<endl;
+    cout<<"Non Recursive"<<endl;
+    r_inorder(root);
+    }
+    
+void tree::inorder(treenode* temp){
+    if(temp != NULL){   
+        inorder(temp->left);
+        cout<<temp->data<<" , ";
+        inorder(temp->right);
+    }
+}
+
+void tree::r_inorder(treenode* temp) {
+    stack<treenode*> s;
+    while(1) {
+        while(temp != NULL){
+            s.push(temp) ;
+            temp = temp ->left;
+        }
+        if (s.empty())
+        break;
+        temp = s.top();
+        s.pop();
+        cout<<temp->data<<",";
+        temp = temp ->right;
+    }
+}
+
+void tree::preorder(){
+    preorder(root);
+    cout<<endl;
+    cout<<"Non Recursive"<<endl;
+    r_preorder(root);
+    }
+    
+void tree::preorder(treenode* temp){
+    if(temp != NULL){
+        cout<<temp->data<<" , ";   
+        preorder(temp->left);
+        preorder(temp->right);
+    }
+}
+
+void tree::r_preorder(treenode* temp) {
+    stack<treenode*> s;
+    while(1) {
+        while(temp != NULL){
+            cout<<temp->data<<",";
+            s.push(temp) ;
+            temp = temp ->left;
+        }
+        if (s.empty())
+        break;
+        temp = s.top();
+        s.pop();
+        temp = temp ->right;
+    }
+}
+
+void tree::postorder(){
+    postorder(root);
+    cout<<endl;
+    cout<<"Non Recursive"<<endl;
+    r_postorder(root);
+    }
+    
+void tree::postorder(treenode* temp){
+    if(temp != NULL){   
+        postorder(temp->left);
+        postorder(temp->right);
+        cout<<temp->data<<" , ";
+    }
+}
+
+void tree::r_postorder(treenode* temp) {
+    stack<treenode*> s;
+    while(1) {
+        while(temp != NULL){
+            s.push(temp) ;
+            temp = temp ->left;
+        }
+        if (s.empty())
+        break;
+        if (s.top()->right == NULL) {
+            temp = s.top();
+            s.pop();
+            cout << temp->data << ",";
+        }
+        while (s.top()->right == temp) {
+            temp = s.top();
+            s.pop();
+            cout << temp->data << ",";
+        }
+        temp = s.top()->right;
+    }
+}
+
+int main(){
+    tree a;
+    a.create();
+    cout<<"Inorder traversal"<<endl;
+    a.inorder();
+    cout<<endl;
+    cout<<"Preorder traversal"<<endl;
+    a.preorder();
+    cout<<endl;
+    cout<<"Postorder traversal"<<endl;
+    a.postorder();
+}   
+
+HEAP SORT :
+
+#include<iostream>
+using namespace std;
+
+class heap{
+    int a[20];
+    public:
+    int num;
+    int add();
+    void insert(int*,int);
+    void display(int*,int);
+    void Delete(int);
+    void deleteheap(int*,int);
+    void adjust(int*,int,int);
+    void Sort(int);
+    void sort(int*,int);
+    void deleteh(int*,int);
+    void Select(int);
+    void select(int*,int);
+};
+
+int heap::add(){
+    int j=0,element,c=0;
+    char ch;
+    do{
+         cout<<"\n Enter the element : ";
+         cin>>element;
+         a[j]=element;
+         insert(a,j+1);
+         j++;
+         c++;
+         cout<<"\n Enter your choice (y or n) : ";
+         cin>>ch;
+    }while(ch!='n');
+    display(a,c);
+    return c;
+}
+
+void heap::insert(int a[20],int n){
+    int i=n,element=a[n-1];
+    if(i!=1){
+        while((i>1)&&(a[(i/2)-1]<element)){
+            a[i-1]=a[(i/2)-1];
+            i=(i/2);
+        }
+    a[i-1]=element;
+    }
+}
+
+void heap::display(int a[20],int n){
+    cout<<"\n The Heap is : ";
+    for(int i=0;i<n;i++){
+        cout<<endl;
+        cout<<a[i];
+    }
+}
+
+void heap::Delete(int c){
+    deleteheap(a,c);
+}
+
+void heap::deleteheap(int a[20],int n){
+    char ch;
+    do{
+        int t=a[0];
+        a[0]=a[n-1];
+        a[n-1]=t;
+        n--;
+        adjust(a, n-1, 0);
+        cout<<"\n Enter your choice (y or n) : ";
+        cin>>ch;
+    }while(ch=='y');
+    num = n;
+    display(a,n);
+}
+
+void heap::adjust(int a[20],int n,int i){
+    int j;
+    while(2*i+1<=n){
+        j=2*i+1;
+        if((j+1 <= n)&&(a[i]<a[j])){
+            if(a[j+1] > a[j]){
+                j=j+1;
+                int temp=a[i]; 
+                a[i]=a[j]; 
+                a[j]=temp;
+                i=j;
+            }
+            else{
+                int temp=a[i]; 
+                a[i]=a[j]; 
+                a[j]=temp;
+                i=j;
+            }
+        }
+        i=j;
+    }
+}
+
+void heap::Sort(int n){
+    sort(a,n);
+    display(a,n);
+}
+
+void heap::sort(int a[20],int n){
+    for(int i=(n/2)-1;i >= 0;i--){
+        adjust(a,n-1,i);
+    }
+    while(n>0){
+        int t=a[0];
+        a[0]=a[n-1];
+        a[n-1]=t;
+        n--;
+        adjust(a,n-1,0);
+    }
+}
+
+void heap::deleteh(int a[20],int n){
+    int t=a[0];
+    a[0]=a[n-1];
+    a[n-1]=t;
+    n--;
+    adjust(a, n-1, 0);
+    num = n;
+}
+
+void heap::Select(int n){
+    select(a,n);
+}
+
+void heap::select(int a[20],int n){
+    int b;
+    cout<<"\nEnter the position of the element to be deleted ";
+    cin>>b;
+    for(int i=0;i<b;i++){
+        deleteh(a,n);
+    }
+    cout<<"\nThe selected element is : "<<a[0];
+}
+
+int main(){
+    heap h;
+    int c=h.add();
+    h.Delete(c);
+    h.Sort(h.num);
+    h.Select(h.num);
+}
+
+BFS, DFS TRAVERSAL GRAPH : 
+
+#include<iostream>
+using namespace std;
+
+class gnode{
+    int vertex;
+    gnode *next = NULL;
+    friend class graph;
+    friend class stack;
+    friend class queue;
+};
+
+class stack {
+    int st[20];
+    int top;
+
+    public:
+    stack() {
+        top = -1;
+    }
+    void push(int);
+    int pop();
+    int isEmpty();
+};
+
+void stack::push(int temp) {
+    top++;
+    st[top] = temp;
+}
+
+int stack::pop() {
+    int t;
+    t = st[top];
+    top--;
+    return t;
+}
+
+int stack::isEmpty() {
+    if (top == -1) {
+        return 1;
+    }
+    else
+        return 0;
+}
+
+class queue{
+    int str[20];
+    int front;
+    int rear;
+
+    public:         
+    queue(){
+        front = -1;
+        rear = -1;
+    }
+    void enqueue(int);
+    int dequeue();
+    int isempty();
+};
+
+void queue::enqueue(int temp){
+    if (front == -1){  
+    front = 0;  
+    }  
+    rear++;  
+    str[rear] = temp; 
+}
+
+int queue::dequeue(){
+    int temp = str[front];  
+    front++;  
+    return temp; 
+}
+
+int queue::isempty(){
+    if(front == -1 || front > rear){
+        return -1;  
+    }
+}
+
+class graph{
+    public:
+    gnode *head[20];
+    int n;
+    int visited[10];
+    graph(){
+        cout<<"Enter no. of vertices : ";
+        cin>>n;
+        for (int i=0;i < n;i++){
+            head[i] = new gnode();
+            head[i]->vertex = i;
+        }
+    }
+    void create();
+    void traversal();
+    void dfs(int);
+    void ndfs(int);
+    void bfs(int);
+};
+
+void graph::create(){
+    for (int i=0;i<n;i++){
+        gnode *temp = head[i];
+        int ans;
+        do{
+            int v;
+            cout<<endl<<"Enter adjacent vertex of "<<i<<" : ";
+            cin>>v;
+            if(v==i)
+                cout<<endl<<"Self loop are not allowed"<<endl;
+            else{
+                gnode *curr = new gnode;
+                curr->vertex=v;
+                temp->next=curr;
+                temp=temp->next;
+            }
+            cout<<endl<<"Enter 1 to continue or any other no to exit : ";
+            cin>>ans;
+        }while(ans==1);
+    }
+}
+
+void graph::traversal(){
+    int v;
+    for( int i=0 ; i<n; i++)
+        visited[i]=0;
+    cout<<"Enter starting vertex : ";
+    cin>>v;
+    cout<<endl<<"Recursive DFS : ";
+    dfs(v);
+    cout<<endl<<"Non Recursive DFS : ";
+    ndfs(v);
+    cout<<endl<<"BFS : ";
+    bfs(v);
+}
+
+void graph::dfs(int v){
+    gnode *temp = head[v];
+    cout<<temp->vertex<<" -> ";
+    visited[v]=1;
+    while(temp->next != NULL){
+        int w = temp->next->vertex;
+        if(!visited[w])
+            dfs(w);
+        temp = temp->next;
+    }
+}
+
+void graph::ndfs(int v){
+    int t;
+    stack s;
+    for( int i=0 ; i<n; i++)
+        visited[i]=0;
+    s.push(v);
+    visited[v]=1;
+    do{
+        t = s.pop();
+        cout<<t<<" -> ";
+        gnode *temp = head[t];
+        while(temp->next != NULL){
+            int w = temp->next->vertex;
+            if(!visited[w]){ 
+                s.push(w); 
+                visited[w]=1;
+            }
+            temp = temp->next;
+        }
+    }while(s.isEmpty()!=1);
+}
+
+void graph::bfs(int v){
+    int t;
+    queue q;
+    for(int i=0;i<n;i++)
+        visited[i]=0;
+    q.enqueue(v);
+    visited[v]=1;
+    while(q.isempty() != -1){
+        t = q.dequeue();
+        cout<<t<<" -> ";
+        gnode *temp = head[t];
+        while(temp->next != NULL){
+            int w = temp->next->vertex;
+            if(!visited[w]){
+                q.enqueue(w);
+                visited[w]=1;
+            }
+            temp = temp->next;
+        }
+    }
+} 
+
+int main(){
+    graph a;
+    a.create();
+    cout<<endl;
+    a.traversal();
+}
+
+TREE ALL : 
+
+#include <iostream>
+#include <cstring>
+#include <stack>
+
+using namespace std;
+
+class tree_node
+{
+    char key[20];
+    char value[50];
+    tree_node *left;
+    tree_node *right;
+    friend class bi_tree;
+    friend class queue;
+};
+
+class queue{
+    tree_node* st[20];
+    int front;
+    int rear;
+
+    public:         
+    queue()
+	{
+        front = -1;
+        rear = -1;
+    }
+    void enqueue(tree_node*);
+    tree_node* dequeue();
+    int isempty();
+};
+
+void queue::enqueue(tree_node* temp)
+{
+    if (front == -1)
+	{  
+    front = 0;  
+    }  
+    rear++;  
+    st[rear] = temp; 
+}
+
+tree_node* queue::dequeue()
+{
+    tree_node* temp = st[front];  
+    front++;  
+    return temp; 
+}
+
+int queue::isempty()
+{
+    if(front == -1 || front > rear)
+	{
+        return -1;  
+    }
+}
+    
+class bi_tree
+{
+    public:
+
+    tree_node *root;
+    bi_tree();
+
+    void create();
+    void inorder(tree_node*);
+    void BFS(tree_node*);
+    tree_node* copy(tree_node*);
+    void mirror(tree_node*);
+};
+
+bi_tree::bi_tree()
+{
+    root = NULL;
+}
+    
+void bi_tree::create()
+{
+    root = new tree_node();
+    cout<<"Enter key : "<<endl;
+    cin >> root->key;
+    cout<<"Enter value: "<<endl;
+    cin >> root->value;
+    root->left = NULL;
+    root->right = NULL;
+    int a;
+    do{
+        int flag = 0;
+        tree_node *temp = root;
+        tree_node *curr = new tree_node();
+        cout<<"Enter key : "<<endl;
+        cin >> curr->key;
+        cout<<"Enter value : "<<endl;
+        cin >> curr->value;
+        while(flag == 0){
+            if(strcmp(curr->key,temp->key) == 0 || strcmp(curr->key,temp->key) < 0){
+                if(temp->left == NULL){
+                    temp->left = curr;
+                    flag = 1;
+                }
+                temp = temp->left;
+            }
+            else if(strcmp(curr->key,temp->key) > 0){
+                if(temp->right == NULL){
+                    temp->right = curr;
+                    flag = 1;
+                }
+                temp = temp->right;
+            }
+        }
+        cout<<"Enter 0 to exit or any other number to continue"<<endl;
+        cin >> a;
+    }
+	while(a!=0);
+}
+    
+void bi_tree::inorder(tree_node* temp) 
+{
+    stack<tree_node*> s;
+    while(1) 
+	{
+        while(temp != NULL)
+		{
+            s.push(temp) ;
+            temp = temp ->left;
+        }
+        if (s.empty())
+        break;
+        temp = s.top();
+        s.pop();
+        cout<<temp->key<<" : "<<temp->value<<" , ";
+        temp = temp->right;
+    }
+}
+
+void bi_tree::BFS(tree_node* temp)
+{
+    temp=root;
+    queue q;
+    q.enqueue(temp);
+    while(q.isempty() != -1)
+	{
+        temp = q.dequeue();
+        cout<<temp->key<<" : "<<temp->value<<" , ";
+        if(temp->left != NULL)
+		{
+            q.enqueue(temp->left);
+        }
+        if(temp->right != NULL)
+		{
+            q.enqueue(temp->right);
+        }
+    }
+}
+
+
+tree_node *bi_tree::copy(tree_node *root){
+    if(root == NULL){
+        return NULL;
+    }
+    tree_node *temp = new tree_node();
+    strcpy(temp->key,root->key);
+    strcpy(temp->value,root->value);
+    temp->left = copy(root->left);
+    temp->right = copy(root->right);
+    return temp;
+}
+
+void bi_tree::mirror(tree_node *root)
+{
+    if(root == NULL)
+	{
+        return;
+    }
+    else
+	{
+        tree_node *temp;
+        mirror(root->left);
+        mirror(root->right);
+        temp = root->left;
+        root->left = root->right;
+        root->right = temp;
+    }
+}
+
+int main()
+{
+    bi_tree a;
+    a.create();
+    cout<<"Inorder traversal"<<endl;
+    cout<<"Non Recursive"<<endl;
+    a.inorder(a.root);
+    cout<<endl;
+    cout<<"Breadth First Search"<<endl;
+    a.BFS(a.root);
+    cout<<endl;
+    cout<<"Copied tree"<<endl;
+    tree_node* newnode = a.copy(a.root);
+    a.inorder(newnode);
+    cout<<endl;
+    cout<<"Mirrored Tree"<<endl;
+    a.mirror(a.root);
+    a.inorder(a.root);
+}  
+
+HASHING :
+
+#include<iostream>
+#include<fstream>
+#include<string.h>
+using namespace std;
+
+class employee
+{
+    int id;
+    char name[20];
+    int sal;
+    friend class Hashing;
+};
+
+class Hashing{
+    public:
+    Hashing(){
+        int i = 0;
+        employee e;
+        fstream file("data.txt", ios::app|ios::binary);
+        file.seekp(0, ios::end);
+        for(i = 0; i < 10; i++){
+            e.id = -1;
+            strcpy(e.name, "----");
+            e.sal = -1;
+            file.write((char*)&e, sizeof(e));
+
+        }
+        file.close();
+    }
+    void display_hashtable();
+    void linearprowithoutrep();
+    void linearprobingwithrep();
+};
+
+void Hashing::linearprobingwithrep(){
+    employee e;
+    int loc, i, newloc;
+    char ch;
+    fstream file("data.txt", ios::in|ios::out|ios::binary);
+    do{
+        fflush(stdin);
+        file.seekp(0, ios::beg);
+        cout<<"Enter id, name and sal";
+        cin >> e.id >> e.name >> e.sal;
+        loc = e.id%10;
+        employee temp;
+        file.seekg((long int)loc*(sizeof(e)), ios::beg);
+        file.read((char*)&temp, sizeof(temp));
+        if(temp.id == -1){
+            cout << "Insert first if:";
+            file.seekp((long int)loc*sizeof(e), ios::beg);
+            file.write((char*)&e, sizeof(e));
+        }
+        else{
+            newloc = temp.id%10;
+            if(newloc == loc){
+                for(i = (loc+1)%10; i != loc; i = (i+1)%10){
+                    file.seekg((long int)i*sizeof(e), ios::beg);
+                    file.read((char*)&temp, sizeof(temp));
+                    if(temp.id == -1){
+
+                        cout << "inside if";
+                        file.seekp((long int)i*sizeof(e), ios::beg);
+                        file.write((char*)&e, sizeof(e));
+                        break;
+                    
+                    }
+                }
+            }
+            else{
+                employee temp1 = temp;
+                file.seekp(loc*sizeof(e), ios::beg);
+                file.write((char*)&e, sizeof(e));
+                for(i = (loc+1)%10; i != loc; i = (i+1)%10){
+                    file.seekg(i*sizeof(e), ios::beg);
+                    file.read((char*)&temp, sizeof(temp));
+                    if(temp.id == -1){
+                        file.seekp(i*(sizeof(e)), ios::beg);
+                        file.write((char*)&temp1, sizeof(temp1));
+                        break;
+                    }
+                }
+            }
+            if(i == loc){
+                cout << "Hash Table Full";
+            }
+           
+
+        }
+         file.flush();
+            display_hashtable();
+            cout << "Do you want to continue?";
+            cin >> ch;
+
+    }while(ch == 'y');
+}
+
+
+void Hashing::linearprowithoutrep(){
+    employee e;
+    int loc, i, newloc;
+    char ch;
+    fstream file("data.txt", ios::in|ios::out|ios::binary);
+    do{
+        fflush(stdin);
+        file.seekp(0, ios::beg);
+        cout<<"Enter id, name and sal";
+        cin >> e.id >> e.name >> e.sal;
+        loc = e.id%10;
+        employee temp;
+        file.seekg((long int)loc*(sizeof(e)), ios::beg);
+        file.read((char*)&temp, sizeof(temp));
+        if(temp.id == -1){
+            cout << "Insert first if:";
+            file.seekp((long int)loc*sizeof(e), ios::beg);
+            file.write((char*)&e, sizeof(e));
+        }
+        else{
+            cout << "Inside else";
+            for(i = (loc+1)%10; i != loc; i = (i+1)%10){
+                    file.seekg((long int)i*sizeof(e), ios::beg);
+                    file.read((char*)&temp, sizeof(temp));
+                    if(temp.id == -1){
+
+                        cout << "inside if";
+                        file.seekp((long int)i*sizeof(e), ios::beg);
+                        file.write((char*)&e, sizeof(e));
+                        break;
+                    
+                    }
+                }       
+               if(i == loc){
+                    cout << "Hash table full";
+               } 
+        }
+               file.flush();
+               display_hashtable();
+        cout <<  "Do you want continue?";
+        cin >> ch;
+        }while(ch == 'y');
+    }
+
+void Hashing::display_hashtable(){
+
+    int i;
+    employee a;
+    cout << "id"<<"|"<<"Name"<<"|"<<"sal"<<endl;
+
+    ifstream file("data.txt", ios::in|ios::binary);
+
+    while(file.read((char*)&a, sizeof(a))){
+         cout << a.id<<"|"<<a.name<<"|"<<a.sal<<endl;    
+         }
+    file.close();
+    }
+
+int main(){
+    Hashing h;
+    // h.display_hashtable();
+    // h.linearprowithoutrep();
+    h.display_hashtable();
+    h.linearprobingwithrep();
+
+    return 0;
+}
+
+AVL TREE : 
+
+#include<iostream>
+using namespace std;
+
+class avl{
+    int key;
+    avl *right;
+    avl *left;
+    int height;
+    friend class atree;
+};
+
+class atree{
+    public:
+    avl* root;
+    atree();
+    int height(avl*);
+    int max(int,int);
+    avl* rightrotate(avl*);
+    avl* leftrotate(avl*);
+    int balancefactor(avl *);
+    avl* insert(avl*,int);
+    avl* balance(avl*,int);
+    void inorder(avl*);
+    void preorder(avl*);
+    void postorder(avl*);
+};
+
+atree::atree(){
+    root = NULL;
+}
+
+int atree::height(avl *node){
+    if(node == NULL)
+        return 0;
+    return node->height;
+}
+
+int atree::max(int a,int b){
+    return (a>b)?a:b;
+}
+
+avl* atree::rightrotate(avl* node){
+    avl* x = node->left;
+    avl* y = x->right;
+    x->right = node;
+    node->left = y;
+    node->height = max(height(node->left),height(node->right))+1;
+    x->height = max(height(x->left),height(x->right))+1;
+    return x;
+}
+
+avl* atree::leftrotate(avl* node){
+    avl* x = node->right;
+    avl* y = x->left;
+    x->left = node;
+    node->right = y;
+    node->height = max(height(node->left),height(node->right))+1;
+    x->height = max(height(x->left),height(x->right))+1;
+    return x;
+}
+
+int atree::balancefactor(avl* node){
+    if(node == NULL)
+        return 0;
+    return (height(node->left)-height(node->right));
+}
+
+avl* atree::insert(avl* node,int key){
+    if(node == NULL){
+        avl* temp = new avl();
+        temp->key = key;
+        temp->left = NULL;
+        temp->right = NULL;
+        temp->height = 1;
+        return temp;
+    }
+    if(key <= node->key){
+        node->left = insert(node->left,key);
+    }
+    else if(key > node->key){
+        node->right = insert(node->right,key);
+    }
+    node->height = 1+max(height(node->left),height(node->right));
+    return node;
+}
+
+avl* atree::balance(avl* node,int key){
+    int balance = balancefactor(node);
+    if(balance > 1 && key < node->left->key){
+        return rightrotate(node);
+    }
+    if(balance < -1 && key > node->right->key){
+        return leftrotate(node);
+    }
+    if(balance > 1 && key > node->left->key){
+        node->left = leftrotate(node->left);
+        return rightrotate(node);
+    }
+    if(balance < -1 && key < node->right->key){
+        node->right = rightrotate(node->right);
+        return leftrotate(node);
+    }
+    return node;
+}
+
+void atree::inorder(avl* node){
+    if(node != NULL){   
+        inorder(node->left);
+        cout<<node->key<<" ";
+        inorder(node->right);
+    }
+}
+
+void atree::preorder(avl* node){
+    if(node!= NULL){
+        cout<<node->key<<" ";
+        preorder(node->left);
+        preorder(node->right);
+    }
+}
+
+void atree::postorder(avl* node){
+    if(node != NULL){   
+        postorder(node->left);
+        postorder(node->right);
+        cout<<node->key<<" ";
+    }
+}
+
+int main(){
+    atree a;
+    int ch;
+    do{
+        int key;
+        cout<<"\nEnter key : ";
+        cin>>key;
+        a.root = a.insert(a.root,key);
+        a.root = a.balance(a.root,key);
+        cout<<"\nEnter 0 to exit and any other number to continue : ";
+        cin>>ch;
+    }while(ch!=0);
+    cout<<"\n Inorder :";
+    a.inorder(a.root);
+    cout<<"\n Preorder : ";
+    a.preorder(a.root);
+    cout<<"\n Postorder : ";
+    a.postorder(a.root);
+}
